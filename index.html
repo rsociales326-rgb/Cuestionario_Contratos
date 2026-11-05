@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Interactivo: Conceptos Básicos de Contratos</title>
+    <!-- Tailwind CSS desde CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente Inter desde Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #cbd5e1; /* Gris-azulado suave Slate 300 */
+            color: #1e293b;
+        }
+        
+        .card-bg {
+            background-color: #ffffff;
+        }
+
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.35s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 lg:p-8">
+
+    <!-- Encabezado y Título Principales -->
+    <header class="w-full max-w-3xl text-center my-4">
+        <!-- Nombre antes del título -->
+        <p class="text-slate-600 font-semibold tracking-wide uppercase text-sm sm:text-base mb-1">
+            <i class="fa-solid fa-graduation-cap mr-2 text-sky-700"></i>Profa. Verónica Hermida
+        </p>
+        <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
+            ¿Qué tanto sabes sobre contratos?
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base mt-2 font-medium">
+            Pon a prueba tus conocimientos sobre los principios del derecho de contratos de manera interactiva.
+        </p>
+    </header>
+
+    <!-- Contenedor Principal del Quiz -->
+    <main class="w-full max-w-3xl flex-grow flex flex-col justify-center my-4">
+        
+        <!-- Barra de Progreso -->
+        <div id="progress-container" class="w-full mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <span id="progress-text" class="text-xs sm:text-sm font-bold text-slate-700">Pregunta 1 de 5</span>
+                <span id="score-live" class="text-xs sm:text-sm font-bold text-sky-800 bg-sky-100 px-3 py-1 rounded-full border border-sky-200">Puntos: 0</span>
+            </div>
+            <div class="w-full bg-slate-300 h-3 rounded-full overflow-hidden shadow-inner">
+                <div id="progress-bar" class="bg-sky-600 h-3 rounded-full transition-all duration-300" style="width: 20%"></div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Pregunta -->
+        <div id="quiz-card" class="card-bg rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-300/80 fade-in">
+            <div id="question-box" class="mb-6">
+                <h2 id="question-text" class="text-lg sm:text-xl font-bold text-slate-800 leading-snug">
+                    <!-- Pregunta inyectada por JS -->
+                </h2>
+            </div>
+
+            <!-- Opciones de Respuesta -->
+            <div id="options-container" class="space-y-3">
+                <!-- Opciones inyectadas por JS -->
+            </div>
+
+            <!-- Panel de Feedback (Retroalimentación inmediata) -->
+            <div id="feedback-box" class="hidden mt-6 p-4 rounded-xl border fade-in">
+                <div class="flex items-start gap-3">
+                    <div id="feedback-icon" class="text-xl pt-0.5"></div>
+                    <div>
+                        <h3 id="feedback-title" class="font-bold text-sm sm:text-base mb-1"></h3>
+                        <p id="feedback-text" class="text-xs sm:text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón Siguiente Pregunta -->
+            <div class="mt-6 flex justify-end">
+                <button id="next-btn" class="hidden px-6 py-2.5 bg-sky-700 hover:bg-sky-800 text-white font-semibold rounded-xl transition duration-200 shadow-md flex items-center gap-2">
+                    Siguiente <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Resultados (Oculta al inicio) -->
+        <div id="results-card" class="hidden card-bg rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-300/80 text-center fade-in">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-sky-50 rounded-full mb-4 border border-sky-100">
+                <i id="results-icon" class="fa-solid fa-trophy text-4xl text-amber-500"></i>
+            </div>
+            
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">¡Cuestionario Finalizado!</h2>
+            <p class="text-slate-600 text-sm sm:text-base mb-6">Resumen de tus respuestas y puntuación:</p>
+
+            <!-- Puntuación Final -->
+            <div class="bg-slate-50 rounded-xl p-4 mb-6 border border-slate-200 inline-block w-full max-w-sm">
+                <span class="text-slate-500 text-xs sm:text-sm uppercase tracking-wider block font-bold mb-1">Puntuación Final</span>
+                <span id="final-score" class="text-4xl sm:text-5xl font-black text-sky-700">0 / 5</span>
+                <p id="final-message" class="text-sm font-semibold text-slate-700 mt-2"></p>
+            </div>
+
+            <!-- Resumen de Respuestas -->
+            <div class="text-left mb-8">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">Desglose de Conceptos:</h3>
+                <div id="summary-list" class="space-y-4 text-xs sm:text-sm">
+                    <!-- Resumen inyectado por JS -->
+                </div>
+            </div>
+
+            <!-- Botón para Reiniciar -->
+            <button id="restart-btn" class="px-8 py-3 bg-sky-700 hover:bg-sky-800 text-white font-bold rounded-xl transition duration-200 shadow-lg flex items-center gap-2 mx-auto">
+                <i class="fa-solid fa-rotate-right"></i> Reiniciar Cuestionario
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="w-full text-center py-4 text-slate-600 text-xs font-medium">
+        Profa. Verónica Hermida &bull; Conceptos Básicos de Derecho Contractual &copy; <span id="year"></span>
+    </footer>
+
+    <!-- Script de Interacción -->
+    <script>
+        const quizData = [
+            {
+                question: "¿Qué es esencialmente un contrato en el ámbito legal?",
+                options: [
+                    { text: "Cualquier promesa informal hecha de palabra entre personas.", correct: false },
+                    { text: "Un acuerdo voluntario que genera una promesa legalmente exigible ante un tribunal.", correct: true },
+                    { text: "Un documento obligatoriamente redactado e impreso por un notario público.", correct: false },
+                    { text: "Un pago monetario que se realiza sin necesidad de compromisos mutuos.", correct: false }
+                ],
+                explanation: "Un contrato es un acuerdo voluntario que crea una **promesa legalmente exigible**. Esto significa que el sistema judicial intervendrá para respaldarla en caso de incumplimiento."
+            },
+            {
+                question: "Si haces una promesa casual con un amigo (como quedar a comer el sábado), ¿constituye un contrato legalmente exigible?",
+                options: [
+                    { text: "Sí, porque dar la palabra obliga legalmente ante la ley.", correct: false },
+                    { text: "Sí, si la promesa quedó guardada en un mensaje de texto.", correct: false },
+                    { text: "No, las promesas o acuerdos puramente sociales no son exigibles ante un juez.", correct: true },
+                    { text: "Sí, siempre y cuando haya otra persona que sirva de testigo.", correct: false }
+                ],
+                explanation: "Las promesas sociales, familiares o informales **carecen de intención de crear una relación jurídica obligatoria**, por lo que los tribunales no las consideran contratos exigibles."
+            },
+            {
+                question: "¿Cuáles son los tres elementos fundamentales para la formación de un contrato válido?",
+                options: [
+                    { text: "Oferta, Aceptación y Contraprestación.", correct: true },
+                    { text: "Firma, Notario y Testigos.", correct: false },
+                    { text: "Escritura, Pago en efectivo y Sello Oficial.", correct: false },
+                    { text: "Promesa, Buena Intención y Abogados.", correct: false }
+                ],
+                explanation: "Los tres pilares para formar un contrato son la **Oferta** (propuesta de términos), la **Aceptación** (asentimiento incondicional) y la **Contraprestación** (el valor intercambiado)."
+            },
+            {
+                question: "En el derecho de contratos, ¿qué significa la 'contraprestación'?",
+                options: [
+                    { text: "Una multa que se paga cuando una de las partes se arrepiente.", correct: false },
+                    { text: "El intercambio donde cada parte da o promete algo de valor (ej. dinero a cambio de un bien o servicio).", correct: true },
+                    { text: "El derecho a rechazar un contrato si no fue firmado por duplicado.", correct: false },
+                    { text: "Una prórroga concedida para cumplir con la entrega de un trabajo.", correct: false }
+                ],
+                explanation: "La **contraprestación** es el elemento de valor que justifica el contrato: lo que cada parte acuerda entregar, hacer o abstenerse de hacer (como dinero a cambio de un servicio o producto)."
+            },
+            {
+                question: "¿Qué ocurre si una de las partes rompe una promesa incluida en un contrato legalmente válido?",
+                options: [
+                    { text: "No ocurre nada, ya que las promesas pueden modificarse sin consecuencias.", correct: false },
+                    { text: "Se genera responsabilidad legal e indemnización por daños o cumplimiento forzoso mediante un tribunal.", correct: true },
+                    { text: "La persona que incumplió va a prisión de manera automática e inmediata.", correct: false },
+                    { text: "El contrato se anula y ambas partes pierden todo derecho a reclamar.", correct: false }
+                ],
+                explanation: "El incumplimiento de un contrato válido genera **responsabilidad legal**. La parte perjudicada puede acudir a un juez para solicitar el cumplimiento forzoso o una indemnización por daños y perjuicios."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = [];
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const nextBtn = document.getElementById('next-btn');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreLive = document.getElementById('score-live');
+        
+        const quizCard = document.getElementById('quiz-card');
+        const resultsCard = document.getElementById('results-card');
+        const progressContainer = document.getElementById('progress-container');
+        
+        const finalScore = document.getElementById('final-score');
+        const finalMessage = document.getElementById('final-message');
+        const summaryList = document.getElementById('summary-list');
+        const restartBtn = document.getElementById('restart-btn');
+        const resultsIcon = document.getElementById('results-icon');
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+        loadQuestion();
+
+        function loadQuestion() {
+            feedbackBox.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            optionsContainer.innerHTML = '';
+            
+            const currentQuiz = quizData[currentQuestionIndex];
+            
+            questionText.textContent = `${currentQuestionIndex + 1}. ${currentQuiz.question}`;
+            progressText.textContent = `Pregunta ${currentQuestionIndex + 1} de ${quizData.length}`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+            scoreLive.textContent = `Puntos: ${score}`;
+
+            currentQuiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 rounded-xl card-bg border border-slate-300 hover:border-sky-600 text-slate-800 text-sm sm:text-base flex items-center justify-between group shadow-sm`;
+                button.innerHTML = `
+                    <span class="pr-3 font-medium">${option.text}</span>
+                    <i class="fa-regular fa-circle text-slate-400 group-hover:text-sky-600 transition-colors"></i>
+                `;
+                button.addEventListener('click', () => selectOption(index, option.correct));
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectOption(index, isCorrect) {
+            const buttons = optionsContainer.querySelectorAll('button');
+            const currentQuiz = quizData[currentQuestionIndex];
+
+            selectedAnswers[currentQuestionIndex] = {
+                question: currentQuiz.question,
+                selectedText: currentQuiz.options[index].text,
+                isCorrect: isCorrect,
+                explanation: currentQuiz.explanation
+            };
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                const icon = btn.querySelector('i');
+                
+                if (idx === index) {
+                    if (isCorrect) {
+                        btn.className = 'w-full text-left p-4 rounded-xl bg-emerald-50 border-2 border-emerald-600 text-emerald-950 text-sm sm:text-base flex items-center justify-between font-semibold shadow-sm';
+                        icon.className = 'fa-solid fa-circle-check text-emerald-600 text-lg';
+                    } else {
+                        btn.className = 'w-full text-left p-4 rounded-xl bg-rose-50 border-2 border-rose-500 text-rose-950 text-sm sm:text-base flex items-center justify-between font-semibold shadow-sm';
+                        icon.className = 'fa-solid fa-circle-xmark text-rose-600 text-lg';
+                    }
+                } else if (currentQuiz.options[idx].correct) {
+                    btn.className = 'w-full text-left p-4 rounded-xl bg-emerald-50/60 border border-emerald-500/60 text-emerald-900 text-sm sm:text-base flex items-center justify-between font-medium';
+                    icon.className = 'fa-solid fa-circle-check text-emerald-600/80';
+                } else {
+                    btn.className = 'w-full text-left p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 text-sm sm:text-base opacity-60 flex items-center justify-between';
+                }
+            });
+
+            if (isCorrect) {
+                score++;
+                scoreLive.textContent = `Puntos: ${score}`;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBox.className = 'mt-6 p-4 rounded-xl border bg-emerald-50 border-emerald-300 fade-in';
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i>';
+                feedbackTitle.className = 'font-bold text-sm sm:text-base mb-1 text-emerald-900';
+                feedbackTitle.textContent = '¡Respuesta Correcta!';
+            } else {
+                feedbackBox.className = 'mt-6 p-4 rounded-xl border bg-rose-50 border-rose-300 fade-in';
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-600"></i>';
+                feedbackTitle.className = 'font-bold text-sm sm:text-base mb-1 text-rose-900';
+                feedbackTitle.textContent = 'Respuesta Incorrecta';
+            }
+            
+            const formattedExplanation = currentQuiz.explanation.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>');
+            feedbackText.innerHTML = formattedExplanation;
+
+            nextBtn.classList.remove('hidden');
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtn.innerHTML = 'Ver Resultados <i class="fa-solid fa-trophy text-xs"></i>';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizCard.classList.add('hidden');
+            progressContainer.classList.add('hidden');
+            resultsCard.classList.remove('hidden');
+
+            finalScore.textContent = `${score} / ${quizData.length}`;
+
+            if (score === quizData.length) {
+                finalMessage.textContent = "¡Excelente! Dominas perfectamente los conceptos básicos de contratos.";
+                resultsIcon.className = "fa-solid fa-trophy text-4xl text-amber-500";
+            } else if (score >= 3) {
+                finalMessage.textContent = "¡Muy bien! Comprendes los fundamentos de los contratos y la contraprestación.";
+                resultsIcon.className = "fa-solid fa-medal text-4xl text-sky-600";
+            } else {
+                finalMessage.textContent = "Sigue practicando. Recuerda los 3 elementos: oferta, aceptación y contraprestación.";
+                resultsIcon.className = "fa-solid fa-book-open text-4xl text-slate-500";
+            }
+
+            summaryList.innerHTML = '';
+            selectedAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border ${ans.isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'}`;
+                
+                const formattedExplanation = ans.explanation.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>');
+                
+                item.innerHTML = `
+                    <div class="flex items-start gap-2 mb-2">
+                        <i class="fa-solid ${ans.isCorrect ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-rose-600'} mt-0.5"></i>
+                        <p class="font-bold text-slate-800">${idx + 1}. ${ans.question}</p>
+                    </div>
+                    <p class="text-xs text-slate-600 ml-6 mb-1">Tu respuesta: <span class="${ans.isCorrect ? 'text-emerald-800 font-bold' : 'text-rose-800 font-bold'}">${ans.selectedText}</span></p>
+                    <p class="text-xs text-slate-700 ml-6 bg-white p-2.5 rounded-lg border border-slate-200/80 leading-relaxed">${formattedExplanation}</p>
+                `;
+                summaryList.appendChild(item);
+            });
+        }
+
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswers = [];
+            resultsCard.classList.add('hidden');
+            quizCard.classList.remove('hidden');
+            progressContainer.classList.remove('hidden');
+            nextBtn.innerHTML = 'Siguiente <i class="fa-solid fa-arrow-right text-xs"></i>';
+            loadQuestion();
+        });
+    </script>
+</body>
+</html>
